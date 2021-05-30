@@ -41,7 +41,6 @@ chatForm.addEventListener('submit', (e) => {
     return false;
   }
 
-  // Emit message to server
   socket.emit('chatMessage', msg);
 
   // Clear input

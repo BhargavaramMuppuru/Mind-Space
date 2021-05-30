@@ -10,10 +10,14 @@ const {
   getRoomUsers
 } = require('./utils/users');
 const messageArray = {};
+const scoreArray = {};
+const natural = require('natural');
 
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
+var Sentiment = require('sentiment');
+var sentiment = new Sentiment();
 
 // Set static folder
 app.use(express.static(path.join(__dirname, 'public')));
@@ -69,6 +73,12 @@ io.on('connection', socket => {
     if (user) {
 		console.log(user.username)
 		console.log(messageArray[user.username]);
+		var result = sentiment.analyze(messageArray[user.username]);
+		
+		console.dir(result);
+		scoreArray[user.username] = result.score;
+		console.log(scoreArray[user.username]);
+		
       io.to(user.room).emit(
         'message',
         formatMessage(botName, `${user.username} has left the chat`)
@@ -82,6 +92,8 @@ io.on('connection', socket => {
     }
   });
 });
+
+
 
 const PORT = process.env.PORT || 3000;
 
